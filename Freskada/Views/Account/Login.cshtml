@@ -1,0 +1,36 @@
+﻿@model Freskada.Models.ViewModels.LoginVM
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="col-md-9 col-lg-12 col-xl-10">
+    <div class="card shadow-lg o-hidden border-0 my-5">
+        <div class="card-body p-0">
+            <div class="row">
+                <div class="col-lg-6 d-none d-lg-flex">
+                    <div class="flex-grow-1 border-primary" style="background: url('/img/logo.jpg') round;border-radius: 130px;border-right: 10px solid;"></div>
+                </div>
+                <div class="col-lg-6 border-primary" style="border-radius: 130px;border-left: 10px solid;">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <h4 class="text-dark mb-4">Welcome Back!</h4>
+                        </div>
+                        <form class="user" asp-controller="Account" asp-action="Login" method="post" role="form">
+                            <div class="mb-3">
+                                <input asp-for="UserName" class="form-control form-control-user" type="text" placeholder="Enter User Name" />
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <input asp-for="Password" class="form-control form-control-user" type="password" placeholder="Password" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <button class="btn btn-primary d-block btn-user w-100" type="submit">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

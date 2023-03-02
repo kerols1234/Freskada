@@ -1,0 +1,134 @@
+﻿@model Patient
+
+<h3 class="text-dark mb-4">Patients</h3>
+
+<div class="card shadow">
+    <div class="card-header">
+        <div class="row p-1">
+            <p class="text-primary m-0 fw-bold col-3">Patients Info</p>
+            <button type="button" class="btn btn-outline-info offset-8 col-1" data-bs-toggle="modal" data-bs-target="#patientForm">Add</button>
+            <div class="modal fade" id="patientForm" tabindex="-1" aria-labelledby="patientFormLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="patientFormLabel">Add Patient</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <form class="col-12 pb-2" asp-action="Upsert" method="post">
+                                    <div class="card custom-card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <input asp-for="Id" hidden class="form-control" type="text">
+                                                <div class="form-group col-4 mb-2">
+                                                    <label asp-for="Name"></label>
+                                                    <input asp-for="Name" class="form-control" />
+                                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                                </div>
+                                                <div class="form-group col-4 mb-2">
+                                                    <label asp-for="PhoneNumber"></label>
+                                                    <input asp-for="PhoneNumber" class="form-control" />
+                                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                                </div>
+                                                <div class="form-group col-4 mb-2">
+                                                    <label asp-for="BirthDate"></label>
+                                                    <input asp-for="BirthDate" class="form-control" />
+                                                    <span asp-validation-for="BirthDate" class="text-danger"></span>
+                                                </div>
+                                                <div class="form-group col-12 mb-2">
+                                                    <label asp-for="Address"></label>
+                                                    <input asp-for="Address" class="form-control" />
+                                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                                </div>
+                                                <div class="form-group col-12 mb-2">
+                                                    <label asp-for="HealthStatus"></label>
+                                                    <textarea asp-for="HealthStatus" rows="4" class="form-control"></textarea>
+                                                    <span asp-validation-for="HealthStatus" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-white text-end">
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" id="formSubmint" class="btn btn-outline-info">Create</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table" id="t_patient" style="width: 100%">
+            <thead class="mt-1">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">BirthDate</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Sessions</th>
+                    <th scope="col">Bookings</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+        </table>
+        <div class="modal fade" id="patientsDetails" tabindex="-1" aria-labelledby="patientDetailsLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="patientDetailsLabel">Patient Details</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-striped m-0" id="patientDetails">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Name</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">BirthDate</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">Phone</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">Address</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">Sessions</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">Bookings</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">HealthStatus</th>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/patient.js" asp-append-version="true"></script>
+}
