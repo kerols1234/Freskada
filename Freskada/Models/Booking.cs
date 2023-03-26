@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Freskada.Models
@@ -7,7 +6,7 @@ namespace Freskada.Models
     public class Booking
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
         public string Note { get; set; }
         public int DoctorId { get; set; }
         [ForeignKey("DoctorId")]

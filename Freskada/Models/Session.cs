@@ -13,7 +13,7 @@ namespace Freskada.Models
         }
 
         public int Id { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
         [Required]
         public double Price { get; set; }
         public string Note { get; set; }

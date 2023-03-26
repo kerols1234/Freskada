@@ -1,5 +1,3 @@
-using System;
-
 namespace Freskada.Models
 {
     public class ErrorViewModel
