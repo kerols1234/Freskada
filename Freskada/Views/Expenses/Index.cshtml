@@ -1,0 +1,112 @@
+﻿@model Expense
+
+<h3 class="text-dark mb-4">Expenses</h3>
+
+<div class="card shadow">
+    <div class="card-header">
+        <div class="row p-1">
+            <p class="text-primary m-0 fw-bold col-3">Expenses Info</p>
+            <button type="button" class="btn btn-outline-info offset-8 col-1" data-bs-toggle="modal" data-bs-target="#expenseForm">Add</button>
+            <div class="modal fade" id="expenseForm" tabindex="-1" aria-labelledby="expenseFormLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="expenseFormLabel">Add Expense</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <form class="col-12 pb-2" asp-action="Upsert" method="post">
+                                    <div class="card custom-card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <input asp-for="Id" hidden class="form-control" type="text">
+                                                <input asp-for="UserId" hidden class="form-control" type="text">
+                                                <div class="form-group col-6 mb-2">
+                                                    <label asp-for="AmountOfMoney"></label>
+                                                    <input asp-for="AmountOfMoney" type="number" class="form-control" />
+                                                    <span asp-validation-for="AmountOfMoney" class="text-danger"></span>
+                                                </div>
+                                                <div class="form-group col-6 mb-2">
+                                                    <label asp-for="Date"></label>
+                                                    <input asp-for="Date" class="form-control" />
+                                                    <span asp-validation-for="Date" class="text-danger"></span>
+                                                </div>
+                                                <div class="form-group col-12 mb-2">
+                                                    <label asp-for="Description"></label>
+                                                    <textarea asp-for="Description" rows="4" class="form-control"></textarea>
+                                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-white text-end">
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" id="formSubmint" class="btn btn-outline-info">Create</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table" id="t_expense" style="width: 100%">
+            <thead class="mt-1">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Money</th>
+                    <th scope="col">Date</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+        </table>
+        <div class="modal fade" id="expensesDetails" tabindex="-1" aria-labelledby="expenseDetailsLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="expenseDetailsLabel">Expense Details</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-striped m-0" id="expenseDetails">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Id</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">User</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">Money</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <td></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/expense.js" asp-append-version="true"></script>
+}

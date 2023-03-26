@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Freskada.Models.ApplicationUser">
+    <Position X="11" Y="5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAQIAAAAAAAgAAAAACAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Sessions" />
+      <Property Name="Purchases" />
+      <Property Name="Expenses" />
+      <Property Name="Bookings" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Freskada.Models.Booking">
+    <Position X="6.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAQAAAAAAAAAAAAgAAAACAAQBAAAAAAEACAA=</HashCode>
+      <FileName>Models\Booking.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="User" />
+      <Property Name="Patient" />
+      <Property Name="Doctor" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Freskada.Models.Doctor">
+    <Position X="3" Y="8.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAgAAAAACAAQAQAAAACAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Doctor.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Sessions" />
+      <Property Name="Bookings" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Freskada.Models.ErrorViewModel">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ErrorViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Freskada.Models.Expense">
+    <Position X="11" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAgAAAAAAAAAAgABAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Expense.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="User" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Freskada.Models.Material">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>gAACAAAAAQAgAAAAAAAAACQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Material.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="SessionMaterials" />
+      <Property Name="PurchaseMaterials" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Freskada.Models.Patient">
+    <Position X="3" Y="4.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAgAAAAACAAQAQAAAAAAAACAIAAAAAAAAA=</HashCode>
+      <FileName>Models\Patient.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Sessions" />
+      <Property Name="Bookings" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Freskada.Models.Purchase">
+    <Position X="11" Y="0.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>gAADAAAAAAAAAAAAAAAAAAgAAAAAAAABAAAAAAEAAAA=</HashCode>
+      <FileName>Models\Purchase.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="User" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="PurchaseMaterials" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Freskada.Models.PurchaseMaterial">
+    <Position X="8.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAABQAAAAAgAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PurchaseMaterial.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Purchase" />
+      <Property Name="Material" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Freskada.Models.Session">
+    <Position X="6.75" Y="4.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAQAAAAAAAAAAACgAAAACAAQBAAAAAAEACAA=</HashCode>
+      <FileName>Models\Session.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="User" />
+      <Property Name="Patient" />
+      <Property Name="Doctor" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="SessionMaterials" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Freskada.Models.SessionMaterial">
+    <Position X="4.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAQAgAAQAAAAIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\SessionMaterial.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Session" />
+      <Property Name="Material" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

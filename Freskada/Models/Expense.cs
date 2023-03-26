@@ -9,7 +9,7 @@ namespace Freskada.Models
         public int Id { get; set; }
         [Required]
         public double AmountOfMoney { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now;
+        public DateTime? Date { get; set; }
         [Required]
         public string Description { get; set; }
         public string UserId { get; set; }
