@@ -1,0 +1,162 @@
+﻿@model Purchase
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="card shadow">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12  mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <input asp-for="Id" hidden class="form-control" type="text">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group col-4">
+                                <label asp-for="Date" class="control-label"></label>
+                                <input asp-for="Date" disabled class="form-control" />
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group col-12 mb-2">
+                                <label asp-for="Note"></label>
+                                <textarea asp-for="Note" rows="4" class="form-control"></textarea>
+                                <span asp-validation-for="Note" class="text-danger"></span>
+                            </div>
+                            <div class="offset-12 form-group mt-3 col-3">
+                                <button type="button" onclick="toggle()" class="btn btn-info mr-2">
+                                    Edit
+                                </button>
+                                <button type="button" hidden onclick="saveChanges()" class="btn btn-info mr-2">
+                                    Save
+                                </button>
+                                <button type="button" hidden onclick="toggle()" class="btn btn-warning text-white">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="offset-10 col-3 mb-3">
+                                <a asp-action="AddMaterial" asp-route-id="@Model.Id" class="btn btn-info mr-2">
+                                    Add Material
+                                </a>
+                            </div>
+                            <div class="form-group col-12">
+                                <table class="table" id="doctor_clinic" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @* @foreach (var item in Model.DoctorClinics)
+                                        {
+                                        <tr>
+                                        <th>@item.Clinic.Region.Name</th>
+                                        <th>@item.Clinic.Address</th>
+                                        <th>@item.Clinic.Phone1</th>
+                                        <th>@item.BestTimeForVisit.StartDay</th>
+                                        <th>@item.BestTimeForVisit.EndDay</th>
+                                        <th>@item.BestTimeForVisit.StartTime</th>
+                                        <th>@item.BestTimeForVisit.EndTime</th>
+                                        <th>
+                                        <div class="text-center">
+                                        <a href="/Doctors/DetailsClinic?idD=@item.DoctorId&idC=@item.ClinicId" class='btn btn-success text-white' style='cursor:pointer;'>
+                                        <i class="fa fa-book"></i>
+                                        </a>
+                                        &nbsp;
+                                        <a class='btn btn-danger text-white' style='cursor:pointer;'
+                                        onclick='Delete("/Doctors/DeleteDoctorClinic?idD=@item.DoctorId&idC=@item.ClinicId",this,"doctor_clinic")'>
+                                        <i class="fa fa-times"></i>
+                                        </a>
+                                        </div>
+                                        </th>
+                                        </tr>
+                                        }*@
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script type="text/javascript">
+        function toggle() {
+            $("input").prop('disabled', (i, v) => !v);
+            $("select").prop('disabled', (i, v) => !v);
+            $("button").prop('hidden', (i, v) => !v);
+        }
+        function saveChanges() {
+            var doctor = {};
+            doctor.Id = @Model.Id;
+            doctor.Name = $("#Name").val();
+            doctor.DoctorSpecialty = parseInt($("#DoctorSpecialty option:selected").val());
+            doctor.DoctorDegree = parseInt($("#DoctorDegree option:selected").val());
+            console.log(JSON.stringify(doctor));
+            $.ajax({
+                type: "POST",
+                url: "/Doctors/Edit",
+                data: JSON.stringify(doctor),
+                contentType: "application/json; charset=utf-8",
+                traditional: true,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.message);
+                        toggle();
+                    }
+                    else {
+                        toastr.error(data.message);
+                    }
+                }
+            });
+        }
+        function Delete(url, button, table_name) {
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        success: function (data) {
+                            if (data.success) {
+                                toastr.success(data.message);
+                                var row = $(button).closest("TR");
+                                var table = $('#' + table_name)[0];
+                                table.deleteRow(row[0].rowIndex);
+                            }
+                            else {
+                                toastr.error(data.message);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+
+}

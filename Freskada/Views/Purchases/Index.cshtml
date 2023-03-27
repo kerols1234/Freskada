@@ -1,0 +1,30 @@
+﻿<h3 class="text-dark mb-4">Purchases</h3>
+
+<div class="card shadow">
+    <div class="card-header">
+        <div class="row p-1">
+            <p class="text-primary m-0 fw-bold col-3">Purchases Info</p>
+            <a asp-action="Upsert" class="btn btn-outline-info offset-8 col-1">Add</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table" id="t_purchase" style="width: 100%">
+            <thead class="mt-1">
+                <tr>
+                    <th scope="col">User</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Materials Number</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/purchase.js" asp-append-version="true"></script>
+}
