@@ -1,0 +1,75 @@
+﻿@model Material
+
+<h3 class="text-dark mb-4">Materials</h3>
+
+<div class="card shadow">
+    <div class="card-header">
+        <div class="row p-1">
+            <p class="text-primary m-0 fw-bold col-3">Materials Info</p>
+            <button type="button" class="btn btn-outline-info offset-8 col-1" data-bs-toggle="modal" data-bs-target="#materialForm">Add</button>
+            <div class="modal fade" id="materialForm" tabindex="-1" aria-labelledby="materialFormLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="materialFormLabel">Add Material</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <form class="col-12 pb-2" asp-action="Upsert" method="post">
+                                    <div class="card custom-card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <input asp-for="Id" hidden class="form-control" type="text">
+                                                <div class="form-group col-4 mb-2">
+                                                    <label asp-for="Name"></label>
+                                                    <input asp-for="Name" class="form-control" />
+                                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                                </div>
+                                                <div class="form-group col-4 mb-2">
+                                                    <label asp-for="Price"></label>
+                                                    <input asp-for="Price" class="form-control" />
+                                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                                </div>
+                                                <div class="form-group col-12 mb-2">
+                                                    <label asp-for="Description"></label>
+                                                    <textarea asp-for="Description" rows="4" class="form-control"></textarea>
+                                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-white text-end">
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" id="formSubmint" class="btn btn-outline-info">Create</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table" id="t_material" style="width: 100%">
+            <thead class="mt-1">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Session Count</th>
+                    <th scope="col">Purchase Count</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/material.js" asp-append-version="true"></script>
+}
