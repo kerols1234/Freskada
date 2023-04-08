@@ -1,0 +1,2 @@
+visual studio extensions for windows library for javascript
+automapper

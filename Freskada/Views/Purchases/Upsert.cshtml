@@ -1,39 +1,35 @@
 ﻿@model Purchase
-
 @{
     ViewData["Title"] = "Details";
+    var dateTime = DateTime.Now.ToString("dd/MM/yyyy hh:mm tt");
 }
 
 <div class="card shadow">
+    <div class="card-header">
+        <div class="row p-1">
+            <p class="text-primary m-0 fw-bold col-3">Create Purchases</p>
+            <button onclick="saveChanges()" type="button" class="btn btn-info col-1 mr-2 offset-8">
+                Add
+            </button>
+        </div>
+    </div>
     <div class="card-body">
         <div class="row">
             <div class="col-12  mb-4">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <input asp-for="Id" hidden class="form-control" type="text">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input id="Id" value="0" hidden class="form-control" type="text">
                             <div class="form-group col-4">
-                                <label asp-for="Date" class="control-label"></label>
-                                <input asp-for="Date" disabled class="form-control" />
-                                <span asp-validation-for="Date" class="text-danger"></span>
+                                <label for="Date" class="control-label"></label>
+                                <input id="Date" type="datetime-local" class="form-control" />
+                                <span id="ErrorDate" class="text-danger"></span>
                             </div>
 
-                            <div class="form-group col-12 mb-2">
-                                <label asp-for="Note"></label>
-                                <textarea asp-for="Note" rows="4" class="form-control"></textarea>
-                                <span asp-validation-for="Note" class="text-danger"></span>
-                            </div>
-                            <div class="offset-12 form-group mt-3 col-3">
-                                <button type="button" onclick="toggle()" class="btn btn-info mr-2">
-                                    Edit
-                                </button>
-                                <button type="button" hidden onclick="saveChanges()" class="btn btn-info mr-2">
-                                    Save
-                                </button>
-                                <button type="button" hidden onclick="toggle()" class="btn btn-warning text-white">
-                                    Cancel
-                                </button>
+                            <div class="form-group col-8 mb-2">
+                                <label for="Note"></label>
+                                <textarea id="Note" rows="4" class="form-control"></textarea>
+                                <span id="ErrorNote" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -43,47 +39,62 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="offset-10 col-3 mb-3">
-                                <a asp-action="AddMaterial" asp-route-id="@Model.Id" class="btn btn-info mr-2">
-                                    Add Material
-                                </a>
+                            <div class="col-2">
+                                <span id="ErrorPurchaseMaterial" class="text-danger"></span>
+                            </div>
+                            <div class="offset-11">
+                                <button type="button" class="btn btn-outline-info mr-2" onclick="ShowPurchaseMaterialForm()">Add Material</button>
+                                <div class="modal fade" id="materialForm" tabindex="-1" aria-labelledby="materialFormLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="materialFormLabel">Add Material</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <input id="PurchaseId" value="0" hidden class="form-control" type="text">
+                                                    <div class="form-group col-3">
+                                                        <label for="MaterialId">Material</label>
+                                                        <select id="MaterialId" asp-items="@ViewBag.selectListItems" class="form-select"></select>
+                                                    </div>
+                                                    <div class="form-group col-3">
+                                                        <label for="NumberOfPieces">Number Of Pieces</label>
+                                                        <input id="NumberOfPieces" onkeyup="ChangeNumberOfPieces()" class="form-control" type="number" />
+                                                        <span id="ErrorNumberOfPieces" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="form-group col-3">
+                                                        <label for="PricePerPiece">Price Per Piece</label>
+                                                        <input id="PricePerPiece" onkeyup="ChangePricePerPiece()" class="form-control" type="number" />
+                                                        <span id="ErrorPricePerPiece" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="form-group col-3">
+                                                        <label for="TotalPrice">Total Price</label>
+                                                        <input id="TotalPrice" onkeyup="ChangeTotalPrice()" class="form-control" type="number" />
+                                                        <span id="ErrorTotalPrice" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" onclick="CreateMaterial()" class="btn btn-outline-info">Create</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group col-12">
-                                <table class="table" id="doctor_clinic" style="width: 100%">
+                                <table class="table" id="purchaseMaterial" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th scope="col">Name</th>
-                                            <th scope="col">Quantity</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Price</th>
+                                            <th scope="col">Number Of Pieces</th>
+                                            <th scope="col">Price Per Piece</th>
+                                            <th scope="col">Total Price</th>
                                             <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @* @foreach (var item in Model.DoctorClinics)
-                                        {
-                                        <tr>
-                                        <th>@item.Clinic.Region.Name</th>
-                                        <th>@item.Clinic.Address</th>
-                                        <th>@item.Clinic.Phone1</th>
-                                        <th>@item.BestTimeForVisit.StartDay</th>
-                                        <th>@item.BestTimeForVisit.EndDay</th>
-                                        <th>@item.BestTimeForVisit.StartTime</th>
-                                        <th>@item.BestTimeForVisit.EndTime</th>
-                                        <th>
-                                        <div class="text-center">
-                                        <a href="/Doctors/DetailsClinic?idD=@item.DoctorId&idC=@item.ClinicId" class='btn btn-success text-white' style='cursor:pointer;'>
-                                        <i class="fa fa-book"></i>
-                                        </a>
-                                        &nbsp;
-                                        <a class='btn btn-danger text-white' style='cursor:pointer;'
-                                        onclick='Delete("/Doctors/DeleteDoctorClinic?idD=@item.DoctorId&idC=@item.ClinicId",this,"doctor_clinic")'>
-                                        <i class="fa fa-times"></i>
-                                        </a>
-                                        </div>
-                                        </th>
-                                        </tr>
-                                        }*@
                                     </tbody>
                                 </table>
                             </div>
@@ -99,64 +110,10 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script type="text/javascript">
-        function toggle() {
-            $("input").prop('disabled', (i, v) => !v);
-            $("select").prop('disabled', (i, v) => !v);
-            $("button").prop('hidden', (i, v) => !v);
-        }
-        function saveChanges() {
-            var doctor = {};
-            doctor.Id = @Model.Id;
-            doctor.Name = $("#Name").val();
-            doctor.DoctorSpecialty = parseInt($("#DoctorSpecialty option:selected").val());
-            doctor.DoctorDegree = parseInt($("#DoctorDegree option:selected").val());
-            console.log(JSON.stringify(doctor));
-            $.ajax({
-                type: "POST",
-                url: "/Doctors/Edit",
-                data: JSON.stringify(doctor),
-                contentType: "application/json; charset=utf-8",
-                traditional: true,
-                dataType: "json",
-                success: function (data) {
-                    if (data.success) {
-                        toastr.success(data.message);
-                        toggle();
-                    }
-                    else {
-                        toastr.error(data.message);
-                    }
-                }
-            });
-        }
-        function Delete(url, button, table_name) {
-            swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true
-            }).then((willDelete) => {
-                if (willDelete) {
-                    $.ajax({
-                        type: "DELETE",
-                        url: url,
-                        success: function (data) {
-                            if (data.success) {
-                                toastr.success(data.message);
-                                var row = $(button).closest("TR");
-                                var table = $('#' + table_name)[0];
-                                table.deleteRow(row[0].rowIndex);
-                            }
-                            else {
-                                toastr.error(data.message);
-                            }
-                        }
-                    });
-                }
-            });
-        }
+    <script src="~/js/purchaseCreateEdit.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            document.getElementById("Date").value = convertDateFormat('@dateTime');
+        });
     </script>
-
 }

@@ -32,7 +32,7 @@ namespace Freskada.Controllers
 
         public IActionResult Upsert(int? id)
         {
-            var selectListItems = _context.Materials.Select(i => new SelectListItem
+            ViewBag.selectListItems = _context.Materials.Select(i => new SelectListItem
             {
                 Text = i.Name,
                 Value = i.Id.ToString(),
@@ -46,10 +46,9 @@ namespace Freskada.Controllers
             return View(purchase);
         }
 
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpsertAsync(Purchase model)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpsertAsync([FromBody]  Purchase model)
         {
             if (ModelState.IsValid)
             {
@@ -72,7 +71,7 @@ namespace Freskada.Controllers
                 _context.SaveChanges();
             }
 
-            return Redirect(nameof(Index));
+            return Json(new { success = true, message = "Purchase Added successfully", href = "/Purchases/Index/" });
         }
 
         [HttpGet]
@@ -88,7 +87,7 @@ namespace Freskada.Controllers
                         obj.User.EmployeeName,
                         PurchaseMaterials = obj.PurchaseMaterials.Count,
                         Date = obj.Date.GetValueOrDefault().ToString("dd/MM/yyyy hh:mm tt"),
-                        Price = obj.PurchaseMaterials.Sum(s => s.Price),
+                        Price = obj.PurchaseMaterials.Sum(s => s.Price * s.NumberOfPieces),
                     }
                 }).ToListAsync()
             });
