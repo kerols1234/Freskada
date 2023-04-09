@@ -32,46 +32,69 @@ namespace Freskada.Controllers
 
         public IActionResult Upsert(int? id)
         {
-            ViewBag.selectListItems = _context.Materials.Select(i => new SelectListItem
+            var purchase = new Purchase();
+            if (id != null)
+            {
+                purchase = _context.Purchases.Include(obj => obj.PurchaseMaterials).ThenInclude(obj => obj.Material).FirstOrDefault(obj => obj.Id == id);
+            }
+
+            ViewBag.selectListItems = _context.Materials.AsEnumerable().Except(purchase.PurchaseMaterials.Select(obj => obj.Material)).Select(i => new SelectListItem
             {
                 Text = i.Name,
                 Value = i.Id.ToString(),
             }).ToList();
 
-            var purchase = new Purchase();
-            if (id != null)
-            {
-                purchase = _context.Purchases.FirstOrDefault(obj => obj.Id == id);
-            }
             return View(purchase);
         }
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpsertAsync([FromBody]  Purchase model)
+        public async Task<IActionResult> UpsertAsync([FromBody] Purchase model)
         {
             if (ModelState.IsValid)
             {
-                if (model.Id != 0)
+                try
                 {
-                    if (model.Date == null)
+                    if (model.Id != 0)
                     {
-                        model.Date = _context.Expenses.AsNoTracking().FirstOrDefault(obj => obj.Id == model.Id).Date;
-                    }
-                    _context.Purchases.Update(model);
-                    TempData[SD.Success] = "Purchase updated successfully";
-                }
-                else
-                {
-                    model.User = (ApplicationUser)await _userManager.GetUserAsync(User);
-                    model.Date = model.Date ?? DateTime.Now;
-                    _context.Purchases.Add(model);
-                    TempData[SD.Success] = "Purchase created successfully";
-                }
-                _context.SaveChanges();
-            }
+                        var purchaseMaterials = _context.PurchaseMaterials.Where(obj => obj.PurchaseId == model.Id);
 
-            return Json(new { success = true, message = "Purchase Added successfully", href = "/Purchases/Index/" });
+                        _context.Entry(model).State = EntityState.Modified;
+
+                        foreach (var item in model.PurchaseMaterials)
+                        {
+                            if (item.PurchaseId > 0)
+                            {
+                                _context.Entry(item).State = EntityState.Modified;
+                            }
+                            else if (item.PurchaseId < 0)
+                            {
+                                item.PurchaseId = model.Id;
+                                _context.Entry(item).State = EntityState.Deleted;
+                            }
+                            else
+                            {
+                                _context.Entry(item).State = EntityState.Added;
+                            }
+                        }
+                        TempData[SD.Success] = "Purchase updated successfully";
+                    }
+                    else
+                    {
+                        model.User = (ApplicationUser)await _userManager.GetUserAsync(User);
+                        model.Date = model.Date ?? DateTime.Now;
+                        _context.Purchases.Add(model);
+                        TempData[SD.Success] = "Purchase created successfully";
+                    }
+                    _context.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    TempData.Clear();
+                    TempData[SD.Error] = "Something wrong happend";
+                }
+            }
+            return Json(new { success = true, href = "/Purchases/Index/" });
         }
 
         [HttpGet]

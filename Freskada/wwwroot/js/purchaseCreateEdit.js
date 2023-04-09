@@ -1,3 +1,23 @@
+var stateOfMaterial = [];
+$(document).ready(function () {
+    if (document.getElementById("Date").value == '') {
+        const now = new Date();
+        const timezoneOffset = now.getTimezoneOffset() * 60000; // get the timezone offset in milliseconds
+        const nowLocal = new Date(now.getTime() - timezoneOffset);
+        const formattedDate = nowLocal.toISOString().slice(0, 16);
+
+        document.getElementById("Date").value = formattedDate;
+    }
+
+    if (document.getElementById("Id").value != "0") {
+        for (let row of document.getElementById("purchaseMaterial").rows) {
+            if (row.rowIndex != 0) {
+                stateOfMaterial.push(row.cells[5].innerText);
+            }
+        }
+    }
+});
+
 function CheckPurchaseMaterialFormValid() {
     let valid = true;
 
@@ -29,6 +49,7 @@ function saveChanges() {
         let table = document.getElementById("purchaseMaterial");
         let purchase = {};
         purchase.Id = document.getElementById("Id").value;
+        purchase.UserId = document.getElementById("UserId").value;
         purchase.Date = document.getElementById("Date").value;
         purchase.Note = document.getElementById("Note").value;
         purchase.PurchaseMaterials = [];
@@ -42,10 +63,28 @@ function saveChanges() {
                 purchaseMaterial.NumberOfPieces = cells[1].innerText;
                 purchaseMaterial.Price = cells[2].innerText;
 
+                if (stateOfMaterial.indexOf(purchaseMaterial.MaterialId) != -1) {
+                    purchaseMaterial.PurchaseId = document.getElementById("Id").value;
+                } else {
+                    purchaseMaterial.PurchaseId = 0;
+                }
+
                 purchase.PurchaseMaterials.push(purchaseMaterial);
             }
         }
-        console.log(JSON.stringify(purchase));
+
+        for (let item of stateOfMaterial) {
+
+            if (purchase.PurchaseMaterials.find(obj => obj.MaterialId == item) === undefined) {
+                let purchaseMaterial = {};
+
+                purchaseMaterial.PurchaseId = -1;
+                purchaseMaterial.MaterialId = item;
+
+                purchase.PurchaseMaterials.push(purchaseMaterial);
+            }
+        }
+
         $.ajax({
             type: "POST",
             url: "/Purchases/Upsert",
@@ -54,13 +93,7 @@ function saveChanges() {
             traditional: true,
             dataType: "json",
             success: function (data) {
-                if (data.success) {
-                    toastr.success(data.message);
-                    window.location.href = data.href;
-                }
-                else {
-                    toastr.error(data.message);
-                }
+                window.location.href = data.href;
             }
         });
     }

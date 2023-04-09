@@ -1,16 +1,33 @@
 ﻿@model Purchase
 @{
     ViewData["Title"] = "Details";
-    var dateTime = DateTime.Now.ToString("dd/MM/yyyy hh:mm tt");
-}
+    var header = "";
+    var btnSubment = "";
 
+    if (Model.Id == 0)
+    {
+        header = "Create Purchase";
+        btnSubment = "Add";
+    }
+    else
+    {
+        header = "Purchase Details";
+        btnSubment = "Update";
+    }
+    
+}
+<div class="row mb-3 me-0">
+    <div class="col-1">
+        <a class="btn btn-info" asp-action="index"><i class="fas fa-chevron-left"></i></a>
+    </div>
+    <button onclick="saveChanges()" type="button" class="btn btn-info col-1 offset-10">
+        @btnSubment
+    </button>
+</div>
 <div class="card shadow">
     <div class="card-header">
         <div class="row p-1">
-            <p class="text-primary m-0 fw-bold col-3">Create Purchases</p>
-            <button onclick="saveChanges()" type="button" class="btn btn-info col-1 mr-2 offset-8">
-                Add
-            </button>
+            <p class="text-primary m-0 fw-bold col-3">@header</p>
         </div>
     </div>
     <div class="card-body">
@@ -19,16 +36,17 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <input id="Id" value="0" hidden class="form-control" type="text">
+                            <input asp-for="Id" hidden class="form-control" type="text">
+                            <input asp-for="UserId" hidden class="form-control" type="text">
                             <div class="form-group col-4">
                                 <label for="Date" class="control-label"></label>
-                                <input id="Date" type="datetime-local" class="form-control" />
+                                <input asp-for="Date" type="datetime-local" class="form-control" />
                                 <span id="ErrorDate" class="text-danger"></span>
                             </div>
 
                             <div class="form-group col-8 mb-2">
                                 <label for="Note"></label>
-                                <textarea id="Note" rows="4" class="form-control"></textarea>
+                                <textarea asp-for="Note" rows="4" class="form-control"></textarea>
                                 <span id="ErrorNote" class="text-danger"></span>
                             </div>
                         </div>
@@ -42,7 +60,7 @@
                             <div class="col-2">
                                 <span id="ErrorPurchaseMaterial" class="text-danger"></span>
                             </div>
-                            <div class="offset-11">
+                            <div class="col-2 offset-8 d-flex justify-content-end">
                                 <button type="button" class="btn btn-outline-info mr-2" onclick="ShowPurchaseMaterialForm()">Add Material</button>
                                 <div class="modal fade" id="materialForm" tabindex="-1" aria-labelledby="materialFormLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-xl">
@@ -53,7 +71,6 @@
                                             </div>
                                             <div class="modal-body">
                                                 <div class="row">
-                                                    <input id="PurchaseId" value="0" hidden class="form-control" type="text">
                                                     <div class="form-group col-3">
                                                         <label for="MaterialId">Material</label>
                                                         <select id="MaterialId" asp-items="@ViewBag.selectListItems" class="form-select"></select>
@@ -95,6 +112,25 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @foreach (var item in Model.PurchaseMaterials)
+                                        {
+                                            var totalPrice = item.Price * item.NumberOfPieces;
+                                            <tr>
+                                                <td>@item.Material.Name</td>
+                                                <td>@item.NumberOfPieces</td>
+                                                <td>@item.Price</td>
+                                                <td>@totalPrice</td>
+                                                <td>
+                                                    <div class="text-center">
+                                                        <button class='btn btn-danger text-white btn-circle mx-1'
+                                                                onclick='RemoveRow(this)'>
+                                                            <i class="fa-solid fa-x"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td hidden>@item.MaterialId</td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>
@@ -111,9 +147,4 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script src="~/js/purchaseCreateEdit.js" asp-append-version="true"></script>
-    <script>
-        $(document).ready(function () {
-            document.getElementById("Date").value = convertDateFormat('@dateTime');
-        });
-    </script>
 }

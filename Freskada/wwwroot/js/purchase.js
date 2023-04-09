@@ -33,41 +33,30 @@ function loadDataTable() {
                     obj = obj.replaceAll("\\r\\n", "<br>");
 
                     let dev = document.createElement("div");
-                    let infoBtn = document.createElement("button");
-                    let editBtn = document.createElement("button");
-                    let editIcon = document.createElement("i");
+                    let infoLink = document.createElement("a");
                     let infoIcon = document.createElement("i");
                     let deleteIcon = document.createElement("i");
-                    let a = document.createElement("a");
+                    let deleteLink = document.createElement("a");
 
                     dev.classList.add("text-center");
 
-                    editBtn.classList.add("btn", "btn-success", "text-white", "btn-circle", "mx-1");
-                    infoBtn.classList.add("btn", "btn-info", "text-white", "btn-circle", "mx-1");
+                    infoLink.classList.add("btn", "btn-info", "text-white", "btn-circle", "mx-1");
+                    infoLink.style.cursor = "pointer";
 
-                    a.style.cursor = "pointer";
-                    a.classList.add("btn", "btn-danger", "text-white", "btn-circle", "mx-1");
+                    deleteLink.style.cursor = "pointer";
+                    deleteLink.classList.add("btn", "btn-danger", "text-white", "btn-circle", "mx-1");
 
-                    editIcon.classList.add("fa", "fa-pencil-alt");
                     infoIcon.classList.add("fa", "fa-book");
                     deleteIcon.classList.add("fa-solid", "fa-x");
 
-                    editBtn.setAttribute("data-bs-target", "#purchaseForm");
-                    editBtn.setAttribute("data-bs-toggle", "modal");
-                    editBtn.setAttribute("onclick", `modelEditclicked('${obj}')`);
+                    infoLink.setAttribute("href", `https://localhost:44385/Purchases/Upsert?id=${data.id}`);
 
-                    infoBtn.setAttribute("data-bs-target", "#purchasesDetails");
-                    infoBtn.setAttribute("data-bs-toggle", "modal");
-                    infoBtn.setAttribute("onclick", `modelInfoclicked('${obj}')`);
+                    deleteLink.setAttribute("onclick", `Delete('/Purchases/DeletePurchase?id=${data.id}')`);
 
-                    a.setAttribute("onclick", `Delete('/Purchases/DeletePurchase?id=${data.id}')`);
-
-                    editBtn.appendChild(editIcon);
-                    infoBtn.appendChild(infoIcon);
-                    a.appendChild(deleteIcon);
-                    dev.appendChild(editBtn);
-                    dev.appendChild(infoBtn);
-                    dev.appendChild(a);
+                    infoLink.appendChild(infoIcon);
+                    deleteLink.appendChild(deleteIcon);
+                    dev.appendChild(infoLink);
+                    dev.appendChild(deleteLink);
 
                     return dev.outerHTML;
                 }
