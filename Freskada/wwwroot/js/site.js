@@ -4,3 +4,9 @@
 
     return `${year}-${month}-${day}T${formattedHour}:${minuteStr}`;
 }
+
+function convertDateFormatTo(inputDate) {
+    const [day, month, year] = inputDate.split('-');
+
+    return `${year}-${month}-${day}`;
+}

@@ -14,6 +14,7 @@ namespace Freskada.Models
         public int PatientId { get; set; }
         [ForeignKey("PatientId")]
         public virtual Patient Patient { get; set; }
+        public virtual Session Session { get; set; } = null;
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }

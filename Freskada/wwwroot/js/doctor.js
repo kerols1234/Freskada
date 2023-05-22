@@ -175,7 +175,7 @@ function modelEditclicked(obj) {
     document.getElementById('Id').value = data.id;
     document.getElementById('Address').value = data.address;
     document.getElementById('PhoneNumber').value = data.phoneNumber;
-    document.getElementById('BirthDate').value = data.birthDate;
+    document.getElementById('BirthDate').value = convertDateFormatTo(data.birthDate);
     document.getElementById('Name').value = data.name;
     document.getElementById('Specialty').value = data.specialty;
 

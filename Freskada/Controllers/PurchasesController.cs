@@ -42,7 +42,7 @@ namespace Freskada.Controllers
             {
                 Text = i.Name,
                 Value = i.Id.ToString(),
-            }).ToList();
+            }).OrderBy(obj => obj.Text).ToList();
 
             return View(purchase);
         }

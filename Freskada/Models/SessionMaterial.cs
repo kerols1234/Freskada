@@ -5,6 +5,7 @@ namespace Freskada.Models
     public class SessionMaterial
     {
         public int NumberOfPieces { get; set; } = 1;
+        public double Price { get; set; }
         public int SessionId { get; set; }
         [ForeignKey("SessionId")]
         public virtual Session Session { get; set; }

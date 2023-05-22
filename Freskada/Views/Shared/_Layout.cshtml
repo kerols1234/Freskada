@@ -40,6 +40,8 @@
                         <li class="nav-item"><a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Materials" ? "active" : "")" asp-controller="Materials" asp-action="Index"><i class="fas fa-toolbox"></i><span>Materials</span></a></li>
                         <li class="nav-item"><a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Purchases" ? "active" : "")" asp-controller="Purchases" asp-action="Index"><i class="fas fa-shopping-cart"></i><span>Purchases</span></a></li>
                         <li class="nav-item"><a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Expenses" ? "active" : "")" asp-controller="Expenses" asp-action="Index"><i class="fas fa-money-check-alt"></i><span>Expenses</span></a></li>
+                        <li class="nav-item"><a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Sessions" ? "active" : "")" asp-controller="Sessions" asp-action="Index"><i class="fa-solid fa-user-check"></i><span>Sessions</span></a></li>
+                        <li class="nav-item"><a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Bookings" ? "active" : "")" asp-controller="Bookings" asp-action="Index"><i class="fa-solid fa-user-check"></i><span>Bookings</span></a></li>
                         <li class="nav-item"><a class="nav-link" href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
                         <li class="nav-item"><a class="nav-link" href="login.html"><i class="far fa-user-circle"></i><span>Login</span></a></li>
                         <li class="nav-item"><a class="nav-link" href="register.html"><i class="fas fa-user-circle"></i><span>Register</span></a></li>

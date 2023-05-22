@@ -3,38 +3,21 @@ var dataTable;
 $(document).ready(function () {
     loadDataTable();
 
-    document.getElementById('patientForm').addEventListener('hidden.bs.modal', event => {
-        let name = document.getElementById('Name');
-        let errorNameSpan = document.getElementById('Name-error');
-
-        if (errorNameSpan != null) {
-            let nameSpan = errorNameSpan.parentNode;
-
-            name.classList.remove("input-validation-error");
-            name.classList.add("valid");
-            name.setAttribute("aria-invalid", "false");
-
-            nameSpan.removeChild(errorNameSpan);
-            nameSpan.classList.remove('field-validation-error');
-            nameSpan.classList.add('field-validation-valid');
-        }
-
-        name.value = "";  
+    document.getElementById('bookingForm').addEventListener('hidden.bs.modal', event => {
         document.getElementById('Id').value = "0";
-        document.getElementById('Address').value = "";
-        document.getElementById('PhoneNumber').value = "";
-        document.getElementById('BirthDate').value = "";
-        document.getElementById('HealthStatus').value = "";
-        
+        document.getElementById('Date').value = "";
+        document.getElementById('Note').value = "";
+        document.getElementById('UserId').value = "0";
+
         document.getElementById('formSubmint').innerText = "Create";
-        document.getElementById('patientFormLabel').innerText = "Add Patient";
+        document.getElementById('bookingFormLabel').innerText = "Add Booking";
     })
 });
 
 function loadDataTable() {
-    dataTable = $('#t_patient').DataTable({
+    dataTable = $('#t_booking').DataTable({
         "ajax": {
-            "url": "/Patients/GetAllPatients/",
+            "url": "/Bookings/GetAllBookings/",
             "type": "GET",
             "datatype": "json"
         },
@@ -48,20 +31,22 @@ function loadDataTable() {
         "lengthChange": false,
         "autoWidth": true,
         "columns": [
-            { "data": "patient.name" },
-            { "data": "patient.birthDate" },
-            { "data": "patient.phoneNumber" },
-            { "data": "patient.address" },
-            { "data": "patient.sessions" },
-            { "data": "patient.bookings" },
+            { "data": "booking.id" },
+            { "data": "booking.doctorName" },
+            { "data": "booking.patientName" },
+            { "data": "booking.date" },
             {
-                "data": "patient",
+                "data": "booking",
                 "render": function (data) {
-                    data.healthStatus = data.healthStatus ?? "";
-                    data.birthDate = data.birthDate ?? "";
-                    data.phoneNumber = data.phoneNumber ?? "";
-                    data.address = data.address ?? "";
+                    data.note = data.note ?? "";
+                    data.date = data.date ?? "";
+                    data.doctorName = data.doctorName ?? "";
+                    data.patientName = data.patientName ?? "";
+                    data.patientId = data.patientId ?? "";
+                    data.doctorId = data.doctorId ?? "";
+
                     let obj = JSON.stringify(data);
+
                     obj = obj.replace("'", "\\'");
                     obj = obj.replaceAll("\\r\\n", "<br>");
 
@@ -85,15 +70,15 @@ function loadDataTable() {
                     infoIcon.classList.add("fa", "fa-book");
                     deleteIcon.classList.add("fa-solid", "fa-x");
 
-                    editBtn.setAttribute("data-bs-target", "#patientForm");
+                    editBtn.setAttribute("data-bs-target", "#bookingForm");
                     editBtn.setAttribute("data-bs-toggle", "modal");
                     editBtn.setAttribute("onclick", `modelEditclicked('${obj}')`);
 
-                    infoBtn.setAttribute("data-bs-target", "#patientsDetails");
+                    infoBtn.setAttribute("data-bs-target", "#bookingsDetails");
                     infoBtn.setAttribute("data-bs-toggle", "modal");
                     infoBtn.setAttribute("onclick", `modelInfoclicked('${obj}')`);
 
-                    a.setAttribute("onclick", `Delete('/Patients/DeletePatient?id=${data.id}')`);
+                    a.setAttribute("onclick", `Delete('/Bookings/DeleteBooking?id=${data.id}')`);
 
                     editBtn.appendChild(editIcon);
                     infoBtn.appendChild(infoIcon);
@@ -142,28 +127,26 @@ function Delete(url) {
 
 function modelInfoclicked(obj) {
     let data = JSON.parse(obj);
-    let table = document.getElementById("patientDetails");
+    let table = document.getElementById("bookingDetails");
     let arrOfTr = table.firstElementChild.children;
 
-    arrOfTr[0].lastElementChild.innerHTML = data.name;
-    arrOfTr[1].lastElementChild.innerHTML = data.birthDate;
-    arrOfTr[2].lastElementChild.innerHTML = data.phoneNumber;
-    arrOfTr[3].lastElementChild.innerHTML = data.address;
-    arrOfTr[4].lastElementChild.innerHTML = data.sessions;
-    arrOfTr[5].lastElementChild.innerHTML = data.bookings;
-    arrOfTr[6].lastElementChild.innerHTML = data.healthStatus;
+    arrOfTr[0].lastElementChild.innerHTML = data.id;
+    arrOfTr[1].lastElementChild.innerHTML = data.doctorName;
+    arrOfTr[2].lastElementChild.innerHTML = data.patientName;
+    arrOfTr[3].lastElementChild.innerHTML = data.date;
+    arrOfTr[4].lastElementChild.innerHTML = data.note;
 }
 
 function modelEditclicked(obj) {
     let data = JSON.parse(obj);
 
     document.getElementById('Id').value = data.id;
-    document.getElementById('Address').value = data.address;
-    document.getElementById('PhoneNumber').value = data.phoneNumber;
-    document.getElementById('BirthDate').value = convertDateFormatTo(data.birthDate);
-    document.getElementById('Name').value = data.name;
-    document.getElementById('HealthStatus').value = `${data.healthStatus.replaceAll('<br>', '\r\n')}`;
+    document.getElementById('UserId').value = data.userId;
+    document.getElementById('DoctorId').value = data.doctorId;
+    document.getElementById('PatientId').value = data.patientId;
+    document.getElementById('Date').value = convertDateFormat(data.date);
+    document.getElementById('Note').value = `${data.note.replaceAll('<br>', '\r\n')}`;
 
     document.getElementById('formSubmint').innerText = "Update";
-    document.getElementById('patientFormLabel').innerText = "Update Patient";
+    document.getElementById('bookingFormLabel').innerText = "Update Booking";
 }

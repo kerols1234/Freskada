@@ -70,7 +70,7 @@ namespace Freskada.Controllers
                         obj.Address,
                         obj.PhoneNumber,
                         obj.Specialty,
-                        BirthDate = obj.BirthDate.GetValueOrDefault().ToString("dd-MM-yyyy") == "01-01-0001" ? "" : obj.BirthDate.GetValueOrDefault().ToString("dd-MM-yyyy"),
+                        BirthDate = obj.BirthDate.GetValueOrDefault().ToString("dd-MM-yyyy") == "01-01-0001" ? "" : obj.BirthDate.GetValueOrDefault().ToString("dd/MM/yyyy"),
                         Sessions = obj.Sessions.Count(),
                         Bookings = obj.Bookings.Count(),
                     }

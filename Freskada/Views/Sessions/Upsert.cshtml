@@ -1,4 +1,4 @@
-﻿@model Purchase
+﻿@model Session
 @{
     ViewData["Title"] = "Details";
     var header = "";
@@ -6,15 +6,15 @@
 
     if (Model.Id == 0)
     {
-        header = "Create Purchase";
+        header = "Create Session";
         btnSubment = "Add";
     }
     else
     {
-        header = "Purchase Details";
+        header = "Session Details";
         btnSubment = "Update";
     }
-    
+
 }
 <div class="row mb-3 me-0">
     <div class="col-1">
@@ -38,13 +38,31 @@
                         <div class="row">
                             <input asp-for="Id" hidden class="form-control" type="text">
                             <input asp-for="UserId" hidden class="form-control" type="text">
-                            <div class="form-group col-4">
+                            <div class="form-group col-3">
                                 <label for="Date" class="control-label">Date</label>
                                 <input asp-for="Date" type="datetime-local" class="form-control" />
                                 <span id="ErrorDate" class="text-danger"></span>
                             </div>
-
-                            <div class="form-group col-8 mb-2">
+                            <div class="form-group col-3">
+                                <label for="DoctorId">Doctor</label>
+                                <select asp-for="DoctorId" asp-items="@ViewBag.selectListItemsOfDoctors" class="form-select"></select>
+                            </div>
+                            <div class="form-group col-3">
+                                <label for="DoctorId">Patient</label>
+                                <select asp-for="PatientId" asp-items="@ViewBag.selectListItemsOfPatients" class="form-select"></select>
+                            </div>
+                            <div class="form-group col-3">
+                                <label for="DoctorId">Booking</label>
+                                <select asp-for="BookingId" asp-items="@ViewBag.selectListItemsOfBookings" class="form-select">
+                                    <option selected value="0">No Booking</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-3  mt-2">
+                                <label for="Price" class="control-label">Price</label>
+                                <input asp-for="Price" type="number" class="form-control" />
+                                <span id="ErrorPrice" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-9 mb-2 mt-2">
                                 <label for="Note">Note</label>
                                 <textarea asp-for="Note" rows="4" class="form-control"></textarea>
                                 <span id="ErrorNote" class="text-danger"></span>
@@ -57,11 +75,8 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-2">
-                                <span id="ErrorPurchaseMaterial" class="text-danger"></span>
-                            </div>
-                            <div class="col-2 offset-8 d-flex justify-content-end">
-                                <button type="button" class="btn btn-outline-info mr-2" onclick="ShowPurchaseMaterialForm()">Add Material</button>
+                            <div class="col-2 offset-10 d-flex justify-content-end">
+                                <button type="button" class="btn btn-outline-info mr-2" onclick="ShowSessionMaterialForm()">Add Material</button>
                                 <div class="modal fade" id="materialForm" tabindex="-1" aria-labelledby="materialFormLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-xl">
                                         <div class="modal-content">
@@ -73,23 +88,21 @@
                                                 <div class="row">
                                                     <div class="form-group col-3">
                                                         <label for="MaterialId">Material</label>
-                                                        <select id="MaterialId" asp-items="@ViewBag.selectListItems" class="form-select"></select>
+                                                        <select id="MaterialId" asp-items="@ViewBag.selectListItemsOfMaterials" class="form-select"></select>
                                                     </div>
                                                     <div class="form-group col-3">
                                                         <label for="NumberOfPieces">Number Of Pieces</label>
-                                                        <input id="NumberOfPieces" onkeyup="ChangeNumberOfPieces()" class="form-control" type="number" />
+                                                        <input id="NumberOfPieces" min="1" onkeyup="ChangeNumberOfPieces()" class="form-control" type="number" />
                                                         <span id="ErrorNumberOfPieces" class="text-danger"></span>
                                                     </div>
-                                                    <div class="form-group col-3">
+                                                    @*<div class="form-group col-3">
                                                         <label for="PricePerPiece">Price Per Piece</label>
-                                                        <input id="PricePerPiece" onkeyup="ChangePricePerPiece()" class="form-control" type="number" />
-                                                        <span id="ErrorPricePerPiece" class="text-danger"></span>
+                                                        <input id="PricePerPiece" disabled class="form-control" type="number" />
                                                     </div>
                                                     <div class="form-group col-3">
                                                         <label for="TotalPrice">Total Price</label>
-                                                        <input id="TotalPrice" onkeyup="ChangeTotalPrice()" class="form-control" type="number" />
-                                                        <span id="ErrorTotalPrice" class="text-danger"></span>
-                                                    </div>
+                                                        <input id="TotalPrice" disabled class="form-control" type="number" />
+                                                    </div>*@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -101,25 +114,25 @@
                                 </div>
                             </div>
                             <div class="form-group col-12">
-                                <table class="table" id="purchaseMaterial" style="width: 100%">
+                                <table class="table" id="sessionMaterial" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th scope="col">Name</th>
                                             <th scope="col">Number Of Pieces</th>
-                                            <th scope="col">Price Per Piece</th>
-                                            <th scope="col">Total Price</th>
+                                            @*<th scope="col">Price Per Piece</th>
+                                            <th scope="col">Total Price</th>*@
                                             <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model.PurchaseMaterials)
+                                        @foreach (var item in Model.SessionMaterials)
                                         {
-                                            var totalPrice = item.Price * item.NumberOfPieces;
+                                            @*var totalPrice = item.Price * item.NumberOfPieces;*@
                                             <tr>
                                                 <td>@item.Material.Name</td>
                                                 <td>@item.NumberOfPieces</td>
-                                                <td>@item.Price</td>
-                                                <td>@totalPrice</td>
+                                                @*<td>@item.Price</td>
+                                                <td>@totalPrice</td>*@
                                                 <td>
                                                     <div class="text-center">
                                                         <button class='btn btn-danger text-white btn-circle mx-1'
@@ -146,5 +159,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script src="~/js/purchaseCreateEdit.js" asp-append-version="true"></script>
+    <script src="~/js/sessionCreateEdit.js" asp-append-version="true"></script>
 }
