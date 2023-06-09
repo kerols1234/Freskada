@@ -1,5 +1,6 @@
 ﻿using Freskada.Data;
 using Freskada.Models;
+using Freskada.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
@@ -51,12 +52,6 @@ namespace Freskada.Controllers
                 Value = i.Id.ToString(),
             }).OrderBy(obj => obj.Text).ToList();
 
-            ViewBag.selectListItemsOfBookings = _context.Bookings.Include(obj => obj.Session).Where(obj => obj.Session == null || obj.Session.Id == session.Id).Select(obj => new { obj.Id, obj.Date, DoctorName = obj.Doctor.Name, PatientName = obj.Patient.Name }).OrderBy(obj => obj.Date).AsEnumerable().Select(i => new SelectListItem
-            {
-                Text = $"{i.DoctorName}_{i.PatientName}_{i.Date.GetValueOrDefault().ToString("dd/MM/yyyy hh:mm tt")}",
-                Value = i.Id.ToString(),
-            }).ToList();
-
             ViewBag.selectListItemsOfMaterials = _context.Materials.AsEnumerable().Except(session.SessionMaterials.Select(obj => obj.Material)).Select(i => new SelectListItem
             {
                 Text = i.Name,
@@ -64,6 +59,26 @@ namespace Freskada.Controllers
             }).OrderBy(obj => obj.Text).ToList();
 
             return View(session);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LoadBookingsAsync([FromBody] LoadingBookingsVM model)
+        {
+            return Json(await _context.Bookings
+                                .Include(obj => obj.Session)
+                                .Where(obj => (obj.DoctorId == model.DoctorId
+                                                && obj.PatientId == model.PatientId
+                                                && obj.Session == null)
+                                            || obj.Session.Id == model.SessionId)
+                                .OrderByDescending(obj => obj.Session)
+                                .ThenByDescending(obj => obj.Date)
+                                .Select(obj => new
+                                {
+
+                                    Text = obj.Date.GetValueOrDefault().ToString("dd/MM/yyyy hh:mm tt"),
+                                    Value = obj.Id.ToString(),
+                                }).ToListAsync()
+            );
         }
 
         [HttpPost]

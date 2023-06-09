@@ -14,8 +14,8 @@
         header = "Session Details";
         btnSubment = "Update";
     }
-
 }
+
 <div class="row mb-3 me-0">
     <div class="col-1">
         <a class="btn btn-info" asp-action="index"><i class="fas fa-chevron-left"></i></a>
@@ -45,16 +45,16 @@
                             </div>
                             <div class="form-group col-3">
                                 <label for="DoctorId">Doctor</label>
-                                <select asp-for="DoctorId" asp-items="@ViewBag.selectListItemsOfDoctors" class="form-select"></select>
+                                <select onchange="loadBookings()" asp-for="DoctorId" asp-items="@ViewBag.selectListItemsOfDoctors" class="form-select"></select>
                             </div>
                             <div class="form-group col-3">
                                 <label for="DoctorId">Patient</label>
-                                <select asp-for="PatientId" asp-items="@ViewBag.selectListItemsOfPatients" class="form-select"></select>
+                                <select onchange="loadBookings()" asp-for="PatientId" asp-items="@ViewBag.selectListItemsOfPatients" class="form-select"></select>
                             </div>
                             <div class="form-group col-3">
                                 <label for="DoctorId">Booking</label>
                                 <select asp-for="BookingId" asp-items="@ViewBag.selectListItemsOfBookings" class="form-select">
-                                    <option selected value="0">No Booking</option>
+                                    @*<option selected value="0">No Booking</option>*@
                                 </select>
                             </div>
                             <div class="form-group col-3  mt-2">
@@ -96,12 +96,12 @@
                                                         <span id="ErrorNumberOfPieces" class="text-danger"></span>
                                                     </div>
                                                     @*<div class="form-group col-3">
-                                                        <label for="PricePerPiece">Price Per Piece</label>
-                                                        <input id="PricePerPiece" disabled class="form-control" type="number" />
+                                                    <label for="PricePerPiece">Price Per Piece</label>
+                                                    <input id="PricePerPiece" disabled class="form-control" type="number" />
                                                     </div>
                                                     <div class="form-group col-3">
-                                                        <label for="TotalPrice">Total Price</label>
-                                                        <input id="TotalPrice" disabled class="form-control" type="number" />
+                                                    <label for="TotalPrice">Total Price</label>
+                                                    <input id="TotalPrice" disabled class="form-control" type="number" />
                                                     </div>*@
                                                 </div>
                                             </div>
@@ -132,7 +132,7 @@
                                                 <td>@item.Material.Name</td>
                                                 <td>@item.NumberOfPieces</td>
                                                 @*<td>@item.Price</td>
-                                                <td>@totalPrice</td>*@
+                                            <td>@totalPrice</td>*@
                                                 <td>
                                                     <div class="text-center">
                                                         <button class='btn btn-danger text-white btn-circle mx-1'
@@ -160,4 +160,79 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script src="~/js/sessionCreateEdit.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            loadBookings();
+            $('#DoctorId').selectize({
+                onBlur: () => {
+                    let selectize = $('#DoctorId').selectize()[0].selectize;
+                    if (selectize.getValue() == "") {
+                        selectize.addItem(Object.keys(selectize.options)[0]);
+                    }
+                }
+            });
+            $('#PatientId').selectize({
+                onBlur: () => {
+                    let selectize = $('#PatientId').selectize()[0].selectize;
+                    if (selectize.getValue() == "") {
+                        selectize.addItem(Object.keys(selectize.options)[0]);
+                    }
+                }
+            });
+            $('#BookingId').selectize({
+                onBlur: () => {
+                    let selectize = $('#BookingId').selectize()[0].selectize;
+                    if (selectize.getValue() == "") {
+                        selectize.addItem(Object.keys(selectize.options)[0]);
+                    }
+                }
+            });
+        });
+
+        function loadBookings() {
+            let loadingbookings = {};
+            let doctorId = $("#DoctorId option:selected").val();
+            let patientId = $("#PatientId option:selected").val();
+            let sessionId = $("#Id").val();
+
+            if (doctorId == "" || patientId == "") {
+                return;
+            }
+
+            loadingbookings.DoctorId = doctorId;
+            loadingbookings.PatientId = patientId;
+            loadingbookings.SessionId = sessionId;
+
+            $.ajax({
+                type: "POST",
+                url: "/Sessions/LoadBookings",
+                data: JSON.stringify(loadingbookings),
+                contentType: "application/json; charset=utf-8",
+                traditional: true,
+                dataType: "json",
+                success: function (data) {
+                    let bookingSelectize = $('#BookingId').selectize()[0].selectize;
+                    bookingSelectize.clear();
+                    bookingSelectize.clearOptions();
+
+                    //document.getElementById("BookingId").options.length = 0;
+
+                    if (data.length != 0) {
+                        for (let i = 0; i < data.length; i++) {
+                            console.log(data[i].value);
+                            bookingSelectize.addOption({ text: data[i].text, value: data[i].value });
+                        }
+                    } else {
+                        bookingSelectize.addOption({ text: "No Items", value: "0" });
+                    }
+
+                    if (sessionId != 0) {
+                        bookingSelectize.addItem(data[0].value);
+                    } else {
+                        bookingSelectize.addItem(Object.keys(bookingSelectize.options)[0]);
+                    }
+                }
+            });
+        }
+    </script>
 }
