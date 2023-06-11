@@ -1,10 +1,14 @@
 ﻿using Freskada.Data;
+using Freskada.Helpers;
 using Freskada.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Freskada.Controllers
@@ -348,5 +352,137 @@ namespace Freskada.Controllers
                     return "Wrong User Name";
                 }
         */
+
+        [HttpGet]
+        public IActionResult GroupOfPermissions()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpsertGroupOfPermissions(string roleId)
+        {
+            var role = roleId != null
+                            ? await _roleManager.FindByIdAsync(roleId)
+                            : null;
+
+            IList<Claim> existingRoleClaims = role != null
+                                                ? await _roleManager.GetClaimsAsync(role)
+                                                : new List<Claim>();
+
+            var model = new RoleClaimsVM()
+            {
+                RoleName = role != null ? role.Name : "",
+                RoleId = role != null ? role.Id : "",
+            };
+
+            foreach (ClaimGroup group in ClaimStore.ClaimsList)
+            {
+                RoleClaimGroup groupRole = new RoleClaimGroup
+                {
+                    GroupName = group.GroupName
+                };
+
+                foreach (Claim claim in group.Claims)
+                {
+                    RoleClaim roleClaim = new RoleClaim
+                    {
+                        ClaimType = claim.Type,
+                        ClaimValue = claim.Value,
+                    };
+
+                    if (existingRoleClaims.Any(c => c.Type == claim.Type))
+                    {
+                        roleClaim.IsSelected = true;
+                    }
+
+                    groupRole.Claims.Add(roleClaim);
+                }
+
+                model.Groups.Add(groupRole);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpsertGroupOfPermissions(RoleClaimsVM roleClaimsViewModel)
+        {
+            IdentityRole role = await _roleManager.FindByIdAsync(roleClaimsViewModel.RoleId);
+
+            if (role == null)
+            {
+                role = new IdentityRole(roleClaimsViewModel.RoleName);
+                await _roleManager.CreateAsync(role);
+            }
+
+            var oldClaims = _db.RoleClaims.Where(obj => obj.RoleId == role.Id).ToList();
+
+            var newClaims = roleClaimsViewModel.Groups
+                .SelectMany(obj => obj.Claims)
+                .Where(obj => obj.IsSelected)
+                .Select(obj => new IdentityRoleClaim<string>
+                {
+                    ClaimType = obj.ClaimType,
+                    ClaimValue = obj.ClaimValue,
+                    RoleId = role.Id
+                });
+
+            var claimsForAdd = newClaims.Except(oldClaims, new RoleClaimComparer());
+            var claimsForRemove = oldClaims.Except(newClaims, new RoleClaimComparer());
+
+            _db.RoleClaims.RemoveRange(claimsForRemove);
+
+            _db.RoleClaims.AddRange(claimsForAdd);
+
+            if (role.Name != roleClaimsViewModel.RoleName)
+            {
+                role.Name = roleClaimsViewModel.RoleName;
+                _db.Roles.Update(role);
+            }
+
+            _db.SaveChanges();
+
+            TempData[SD.Success] = "Claims created successfully";
+            return RedirectToAction(nameof(GroupOfPermissions));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllGroups()
+        {
+            return Json(new
+            {
+                data = await _db.Roles.Select(obj => new
+                {
+                    groups = new
+                    {
+                        obj.Id,
+                        obj.Name,
+                        Users = _db.UserRoles.Where(obj1 => obj1.RoleId == obj.Id).Count(),
+                    }
+                }).ToListAsync()
+            });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteGroup(string id)
+        {
+            var role = await _db.Roles.FirstOrDefaultAsync(obj => obj.Id == id);
+
+            if (_db.UserRoles.Where(obj => obj.RoleId == id).Count() > 0)
+            {
+                return Json(new { success = false, message = "This group has users" });
+            }
+
+            if (role == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+            _db.RoleClaims.RemoveRange(_db.RoleClaims.Where(obj => obj.RoleId == id));
+            _db.Roles.Remove(role);
+            _db.SaveChanges();
+            return Json(new { success = true, message = "Group deleted successfully" });
+        }
     }
 }

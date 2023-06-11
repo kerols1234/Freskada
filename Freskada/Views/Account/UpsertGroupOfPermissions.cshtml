@@ -1,0 +1,66 @@
+﻿@model RoleClaimsVM
+@{
+    var btnText = Model.RoleName == "" ? "Create" : "Update";
+}
+
+<form method="post" asp-action="UpsertGroupOfPermissions">
+    <div class="row mb-3 me-0">
+        <div class="col-1">
+            <a class="btn btn-info" asp-action="GroupOfPermissions"><i class="fas fa-chevron-left"></i></a>
+        </div>
+        <button onclick="saveChanges()" type="button" class="btn btn-info col-1 offset-10">
+            @btnText
+        </button>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="row p-1">
+                <p class="text-primary m-0 fw-bold col-3">Manage Permission</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="form-group col-6 mb-4">
+                    <input asp-for="RoleId" class="form-control" hidden />
+                    <label asp-for="RoleName"></label>
+                    <input asp-for="RoleName" required class="form-control" />
+                    <span asp-validation-for="RoleName" class="text-danger"></span>
+                </div>
+                <div class="offset-6">
+                </div>
+                @for (int i = 0; i < Model.Groups.Count; i++)
+                {
+                    <input asp-for="@Model.Groups[i].GroupName" hidden />
+                    <div class="col-4 mb-4">
+                        <div class="card border-0 text-dark">
+                            <div class="card-header">
+                                <h2>@Model.Groups[i].GroupName</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="row ps-2">
+                                    @for (int j = 0; j < Model.Groups[i].Claims.Count; j++)
+                                    {
+                                        <div class="col-6 mb-2 form-check">
+                                            <input asp-for="@Model.Groups[i].Claims[j].ClaimType" hidden />
+                                            <input asp-for="@Model.Groups[i].Claims[j].ClaimValue" hidden />
+                                            <input asp-for="@Model.Groups[i].Claims[j].IsSelected" class="form-check-input" />
+                                            <label class="form-check-label" asp-for="@Model.Groups[i].Claims[j].ClaimType">
+                                                @Model.Groups[i].Claims[j].ClaimType
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
